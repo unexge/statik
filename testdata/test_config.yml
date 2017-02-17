@@ -1,0 +1,7 @@
+listen: "0.0.0.0:6029"
+files:
+  "/foo.html":
+    cache: true
+    gzip: false
+    push: 
+      - "/assets/js/app.js"

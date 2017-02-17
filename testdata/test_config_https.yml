@@ -1,0 +1,10 @@
+listen: "0.0.0.0:6029"
+https:
+  cert: "./cert.pem"
+  key: "./key.pem" 
+files:
+  "/foo.html":
+    cache: true
+    gzip: false
+    push: 
+      - "/assets/js/app.js"
