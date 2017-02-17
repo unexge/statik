@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -64,13 +67,50 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: compress with gzip.
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		http.Error(w, "server error", http.StatusInternalServerError)
 
-	http.ServeContent(w, r, s.Name(), s.ModTime(), f)
+		return
+	}
+
+	buf := bytes.NewBuffer(b)
+
+	if config.Gzip && strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+		if err = h.compressWithGzip(w, buf); err != nil {
+			http.Error(w, "server error", http.StatusInternalServerError)
+
+			return
+		}
+	}
+
+	fmt.Println(string(buf.Bytes()))
+
+	http.ServeContent(w, r, s.Name(), s.ModTime(), bytes.NewReader(buf.Bytes()))
 }
 
 func (h *Handler) resolveFullPath(p string) string {
 	return path.Join(h.config.Root, p)
+}
+
+func (h *Handler) compressWithGzip(w http.ResponseWriter, buf *bytes.Buffer) error {
+	b := buf.Bytes()
+	buf.Reset()
+
+	writer := gzip.NewWriter(buf)
+
+	_, err := writer.Write(b)
+	if err != nil {
+		return err
+	}
+
+	if err = writer.Close(); err != nil {
+		return err
+	}
+
+	w.Header().Set("Content-Encoding", "gzip")
+
+	return nil
 }
 
 func normalizePath(path string) string {

@@ -1,6 +1,6 @@
 statik
 =====
-simple statik file server
+simple static file server
 
 
 example config
