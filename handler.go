@@ -84,8 +84,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(string(buf.Bytes()))
-
 	http.ServeContent(w, r, s.Name(), s.ModTime(), bytes.NewReader(buf.Bytes()))
 }
 
