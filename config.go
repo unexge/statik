@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
 
 	"gopkg.in/yaml.v2"
 )
@@ -74,10 +73,5 @@ func (c *Config) GetConfigForPath(path string) *FileConfig {
 }
 
 func getPwd() (string, error) {
-	ex, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-
-	return path.Dir(ex), nil
+	return os.Getwd()
 }

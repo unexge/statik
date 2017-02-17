@@ -3,7 +3,6 @@ package main
 import (
 	"io/ioutil"
 	"os"
-	"path"
 	"testing"
 )
 
@@ -14,10 +13,10 @@ func TestNewConfig(t *testing.T) {
 		t.Errorf("cannot create new config: %q", err)
 	}
 
-	ex, _ := os.Executable()
+	wd, _ := os.Getwd()
 
-	if c.Root != path.Dir(ex) {
-		t.Errorf("invalid root, expected = %q; got = %q", path.Dir(ex), c.Root)
+	if c.Root != wd {
+		t.Errorf("invalid root, expected = %q; got = %q", wd, c.Root)
 	}
 }
 
